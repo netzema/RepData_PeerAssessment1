@@ -2,11 +2,14 @@
 title: "Reproducible Research: Peer Assessment 1"
 output: 
   html_document: 
+    fig_caption: yes
     keep_md: yes
     toc: yes
+editor_options: 
+  chunk_output_type: console
 ---
 ## Loading and preprocessing the data
-```r
+```{r chunk1}
 library(ggplot2)
 library(data.table)
 library(DMwR)
@@ -15,7 +18,7 @@ dat <- data.table(read.csv("activity.csv"))
 ```
 
 ## What is mean total number of steps taken per day?
-```r 
+```{r chunk 2}
 NumOfDays <- length(unique(dat$date))
 SumOfEachDay <- tapply(dat$steps, dat$date, sum, na.rm = TRUE)
 MeanTotalSteps <- mean(SumOfEachDay)
@@ -26,7 +29,7 @@ MedianTotalSteps
 ```
 
 ## What is the average daily activity pattern?
-```r
+```{r chunk3}
 IntMean <- tapply(dat$steps, dat$interval, mean, na.rm = TRUE)
 plot(IntMean, type = "l", xlab = "5-Minute-Interval", ylab = "Mean Steps taken per day", main = "Mean steps taken per day in each interval")
 MaxStepsInt <- which.max(IntMean)
@@ -35,10 +38,9 @@ MaxStepsInt
 
 ## Imputing missing values
 In this section we use the K-Neares-Neighbour approach to impute the missing values. For this we make use of the DMwR package, which is available on CRAN.
-```r
+```{r chunk4}
 LogicalNA <- is.na(dat)
 NumOfNA <- sum(LogicalNA)
-complete.cases(dat)
 datImp <- knnImputation(dat, k = 10)
 
 ImpSumOfEachDay <- tapply(datImp$steps, datImp$date, sum)
@@ -51,7 +53,7 @@ ImpMedianTotalSteps
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```r
+```{r chunk5}
 datImp2 <- cbind(datImp, weekdays(as.Date(datImp$date)))
 names(datImp2) <- c("steps", "date", "interval", "weekday")
 datImp2 <- data.table(datImp2)
